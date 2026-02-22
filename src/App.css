@@ -1,0 +1,73 @@
+#root {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-header {
+  text-align: left;
+}
+
+.page-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 2rem;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.controls button {
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  background: #111827;
+  color: #fff;
+  padding: 0.6rem 1.1rem;
+  cursor: pointer;
+}
+
+.controls button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.textbox-label {
+  font-weight: 600;
+  text-align: left;
+}
+
+.textbox {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #d1d5db;
+  padding: 0.9rem 1rem;
+  font-family: 'SFMono-Regular', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 220px;
+}
+
+.textbox:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
