@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import './App.css'
-import Users from './Users'
+import Users from './features/users/Users.tsx'
+import UserDetails from './features/users/UserDetails.tsx'
 
 function App() {
     const [responseText, setResponseText] = useState('')
@@ -69,6 +70,7 @@ function App() {
             <Routes>
                 <Route path="/" element={apiTestPage} />
                 <Route path="/users" element={<Users />} />
+                <Route path="/users/:userId" element={<UserDetails />} />
             </Routes>
         </BrowserRouter>
     )
