@@ -61,11 +61,11 @@ function Users() {
                         </TableHead>
                         <TableBody>
                             {usersData.map((user) => ( // iterate over data
-                                <TableRow key={user.id}>
+                                <TableRow key={user.userId}>
                                     {columns.map((column) => (
-                                        <TableCell key={`${user.id}-${column}`}>
+                                        <TableCell key={`${user.userId}-${column}`}>
                                             {column === 'id' ? (
-                                                <Link to={`/users/${user.id}`}>{user.id}</Link>
+                                                <Link to={`/users/${user.userId}`}>{user.userId}</Link>
                                             ) : (
                                                 String(user[column as keyof User])
                                             )}

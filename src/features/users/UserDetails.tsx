@@ -17,7 +17,7 @@ async function fetchUserById(userId: string): Promise<User> {
     }
 
     const users = (await usersResponse.json()) as User[]
-    const matchingUser = users.find((user) => String(user.id) === userId)
+    const matchingUser = users.find((user) => String(user.userId) === userId)
 
     if (!matchingUser) {
         throw new Error('User not found')
@@ -73,7 +73,7 @@ function UserDetails() {
             {user && !isLoading && !errorMessage ? (
                 <div>
                     <p>
-                        <strong>ID:</strong> {user.id}
+                        <strong>ID:</strong> {user.userId}
                     </p>
                     <p>
                         <strong>First name:</strong> {user.firstName}
@@ -88,7 +88,7 @@ function UserDetails() {
                         <strong>Username:</strong> {user.username}
                     </p>
                     <p>
-                        <strong>Age:</strong> {user.age}
+                        {/*<strong>Age:</strong> {user.age}*/}
                     </p>
                 </div>
             ) : null}

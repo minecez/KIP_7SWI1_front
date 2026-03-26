@@ -1,11 +1,11 @@
 export interface User {
-    age: number
+    userId: string
+    username: string
+    password: string
+    dateOfBirth: string
     email: string
     firstName: string
-    id: string
     lastName: string
-    password: string
-    username: string
-    orders?: unknown[]
+    isAdmin: boolean
 }
 
