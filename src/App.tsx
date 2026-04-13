@@ -4,6 +4,8 @@ import './App.css'
 import Users from './features/users/Users.tsx'
 import UserDetails from './features/users/UserDetails.tsx'
 
+const USERS_PATH = '/users'
+
 function App() {
     const [responseText, setResponseText] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -17,7 +19,9 @@ function App() {
             const response = await fetch('/api/test')
 
             if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`)
+                setErrorMessage(`Request failed with status ${response.status}`)
+                setResponseText('')
+                return
             }
 
             const text = await response.text()
@@ -65,12 +69,12 @@ function App() {
         <BrowserRouter>
             <nav>
                 <Link to="/">API Test</Link>
-                <Link to="/users">Users</Link>
+                <Link to={USERS_PATH}>Users</Link>
             </nav>
             <Routes>
                 <Route path="/" element={apiTestPage} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/users/:userId" element={<UserDetails />} />
+                <Route path={USERS_PATH} element={<Users />} />
+                <Route path={`${USERS_PATH}/:userId`} element={<UserDetails />} />
             </Routes>
         </BrowserRouter>
     )

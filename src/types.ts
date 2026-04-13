@@ -1,11 +1,10 @@
 export interface User {
-    userId: string
+    id: string
     username: string
-    password: string
-    dateOfBirth: string
+    dateOfBirth: string | null
     email: string
     firstName: string
     lastName: string
-    isAdmin: boolean
+    admin: boolean
 }
 

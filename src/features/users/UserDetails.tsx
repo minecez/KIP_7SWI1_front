@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import type { User } from '../../types.ts'
 
+const USERS_PATH = '/app_users'
+
 async function fetchUserById(userId: string): Promise<User> {
     const singleUserResponse = await fetch(`/api/test/users/${userId}`)
 
@@ -17,7 +19,7 @@ async function fetchUserById(userId: string): Promise<User> {
     }
 
     const users = (await usersResponse.json()) as User[]
-    const matchingUser = users.find((user) => String(user.userId) === userId)
+    const matchingUser = users.find((user) => String(user.id) === userId)
 
     if (!matchingUser) {
         throw new Error('User not found')
@@ -63,7 +65,7 @@ function UserDetails() {
             <header className="page-header">
                 <h1>User details</h1>
                 <p>
-                    <Link to="/users">Back to users list</Link>
+                    <Link to={USERS_PATH}>Back to app users list</Link>
                 </p>
             </header>
 
@@ -73,7 +75,7 @@ function UserDetails() {
             {user && !isLoading && !errorMessage ? (
                 <div>
                     <p>
-                        <strong>ID:</strong> {user.userId}
+                        <strong>ID:</strong> {user.id}
                     </p>
                     <p>
                         <strong>First name:</strong> {user.firstName}
@@ -88,7 +90,10 @@ function UserDetails() {
                         <strong>Username:</strong> {user.username}
                     </p>
                     <p>
-                        {/*<strong>Age:</strong> {user.age}*/}
+                        <strong>Date of birth:</strong> {user.dateOfBirth ?? '-'}
+                    </p>
+                    <p>
+                        <strong>Admin:</strong> {user.admin ? 'true' : 'false'}
                     </p>
                 </div>
             ) : null}

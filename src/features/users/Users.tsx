@@ -1,14 +1,25 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
-import type { User } from '../../types.ts'
+
+const USERS_PATH = '/users'
+
+type UserRow = {
+    admin: boolean
+    dateOfBirth: string | null
+    email: string
+    firstName: string
+    id: string
+    lastName: string
+    username: string
+}
 
 function Users() {
-    const [usersData, setUsersData] = useState<User[]>([])
+    const [usersData, setUsersData] = useState<UserRow[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
 
-    const columns = ['id', 'firstName', 'lastName', 'email', 'username', 'age']
+    const columns = ['id', 'username', 'dateOfBirth', 'email', 'firstName', 'lastName', 'admin']
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -16,10 +27,12 @@ function Users() {
             setErrorMessage('')
 
             try {
-                const response = await fetch('/api/test/users') // get data
+                const response = await fetch('/api/users') // get data
 
                 if (!response.ok) {
-                    throw new Error(`Request failed with status ${response.status}`)
+                    setErrorMessage(`Request failed with status ${response.status}`)
+                    setUsersData([])
+                    return
                 }
 
                 const data = await response.json() //save data
@@ -61,13 +74,17 @@ function Users() {
                         </TableHead>
                         <TableBody>
                             {usersData.map((user) => ( // iterate over data
-                                <TableRow key={user.userId}>
+                                <TableRow key={user.id}>
                                     {columns.map((column) => (
-                                        <TableCell key={`${user.userId}-${column}`}>
+                                        <TableCell key={`${user.id}-${column}`}>
                                             {column === 'id' ? (
-                                                <Link to={`/users/${user.userId}`}>{user.userId}</Link>
+                                                <Link to={`${USERS_PATH}/${user.id}`}>{user.id}</Link>
+                                            ) : column === 'dateOfBirth' ? (
+                                                user.dateOfBirth ?? '-'
+                                            ) : column === 'admin' ? (
+                                                user.admin ? 'true' : 'false'
                                             ) : (
-                                                String(user[column as keyof User])
+                                                String(user[column as keyof UserRow])
                                             )}
                                         </TableCell>
                                     ))}
