@@ -7,4 +7,3 @@ export interface User {
     lastName: string
     admin: boolean
 }
-

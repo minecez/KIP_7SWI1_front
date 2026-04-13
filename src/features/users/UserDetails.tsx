@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import type { User } from '../../types.ts'
 
-const USERS_PATH = '/app_users'
+const USERS_PATH = '/users'
 
 async function fetchUserById(userId: string): Promise<User> {
-    const singleUserResponse = await fetch(`/api/test/users/${userId}`)
+    const singleUserResponse = await fetch(`/api/users/${userId}`)
 
     if (singleUserResponse.ok) {
         return (await singleUserResponse.json()) as User
     }
 
     // Fallback for backends that only expose a collection endpoint.
-    const usersResponse = await fetch('/api/test/users')
+    const usersResponse = await fetch('/api/users')
 
     if (!usersResponse.ok) {
         throw new Error(`Request failed with status ${singleUserResponse.status}`)
