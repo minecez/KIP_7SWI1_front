@@ -1,21 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
+import { buildAuthHeaders, loadAuthSession, normalizeUsersPayload, readJsonResponse, USERS_API_PATH } from '../../lib/api.ts'
+import type { User } from '../../types.ts'
 
 const USERS_PATH = '/users'
 
-type UserRow = {
-    admin: boolean
-    dateOfBirth: string | null
-    email: string
-    firstName: string
-    id: string
-    lastName: string
-    username: string
-}
-
 function Users() {
-    const [usersData, setUsersData] = useState<UserRow[]>([])
+    const [usersData, setUsersData] = useState<User[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
 
@@ -27,7 +19,9 @@ function Users() {
             setErrorMessage('')
 
             try {
-                const response = await fetch('/api/users') // get data
+                const response = await fetch(USERS_API_PATH, {
+                    headers: buildAuthHeaders(loadAuthSession()),
+                })
 
                 if (!response.ok) {
                     setErrorMessage(`Request failed with status ${response.status}`)
@@ -35,8 +29,8 @@ function Users() {
                     return
                 }
 
-                const data = await response.json() //save data
-                setUsersData(Array.isArray(data) ? data : [data]) // save data to internal state
+                const data = await readJsonResponse<unknown>(response)
+                setUsersData(normalizeUsersPayload(data))
             } catch (error) {
                 let message = 'Unknown error'
                 if (error instanceof SyntaxError) {
@@ -57,7 +51,7 @@ function Users() {
     return (
         <div className="page">
             <header className="page-header">
-                <h1>Users</h1>
+                <h1>App users</h1>
             </header>
             {errorMessage && <div className="error" style={{ marginBottom: '16px' }}>{errorMessage}</div>}
             {isLoading ? (
@@ -84,7 +78,7 @@ function Users() {
                                             ) : column === 'admin' ? (
                                                 user.admin ? 'true' : 'false'
                                             ) : (
-                                                String(user[column as keyof UserRow])
+                                                String(user[column as keyof User])
                                             )}
                                         </TableCell>
                                     ))}

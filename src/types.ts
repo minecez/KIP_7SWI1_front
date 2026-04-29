@@ -7,3 +7,13 @@ export interface User {
     lastName: string
     admin: boolean
 }
+
+export interface LoginCredentials {
+    username: string
+    password: string
+}
+
+export interface AuthSession {
+    user: User
+    accessToken?: string
+}

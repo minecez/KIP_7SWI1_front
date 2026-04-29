@@ -1,24 +1,30 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import type { User } from '../../types.ts'
+import { buildAuthHeaders, loadAuthSession, readJsonResponse, USERS_API_PATH } from '../../lib/api.ts'
 
 const USERS_PATH = '/users'
 
 async function fetchUserById(userId: string): Promise<User> {
-    const singleUserResponse = await fetch(`/api/users/${userId}`)
+    const requestHeaders = buildAuthHeaders(loadAuthSession())
+    const singleUserResponse = await fetch(`${USERS_API_PATH}/${userId}`, {
+        headers: requestHeaders,
+    })
 
     if (singleUserResponse.ok) {
-        return (await singleUserResponse.json()) as User
+        return await readJsonResponse<User>(singleUserResponse)
     }
 
     // Fallback for backends that only expose a collection endpoint.
-    const usersResponse = await fetch('/api/users')
+    const usersResponse = await fetch(USERS_API_PATH, {
+        headers: requestHeaders,
+    })
 
     if (!usersResponse.ok) {
-        throw new Error(`Request failed with status ${singleUserResponse.status}`)
+        throw new Error(`Request failed with status ${usersResponse.status}`)
     }
 
-    const users = (await usersResponse.json()) as User[]
+    const users = await readJsonResponse<User[]>(usersResponse)
     const matchingUser = users.find((user) => String(user.id) === userId)
 
     if (!matchingUser) {
@@ -63,7 +69,7 @@ function UserDetails() {
     return (
         <div className="page">
             <header className="page-header">
-                <h1>User details</h1>
+                <h1>App user details</h1>
                 <p>
                     <Link to={USERS_PATH}>Back to app users list</Link>
                 </p>
