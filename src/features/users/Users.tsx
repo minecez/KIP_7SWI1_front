@@ -1,17 +1,69 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, TableSortLabel } from '@mui/material'
 import { buildAuthHeaders, loadAuthSession, normalizeUsersPayload, readJsonResponse, USERS_API_PATH } from '../../lib/api.ts'
 import type { User } from '../../types.ts'
 
 const USERS_PATH = '/users'
+type SortField = 'id' | 'username' | 'dateOfBirth' | 'email' | 'firstName' | 'lastName' | 'admin'
+type SortDirection = 'asc' | 'desc'
 
 function Users() {
     const [usersData, setUsersData] = useState<User[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
+    const [searchTerm, setSearchTerm] = useState('')
+    const [sortField, setSortField] = useState<SortField>('id')
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+    
+    const currentUser = loadAuthSession()?.user
 
     const columns = ['id', 'username', 'dateOfBirth', 'email', 'firstName', 'lastName', 'admin']
+
+    const filterUsers = (users: User[], term: string): User[] => {
+        if (!term) return users
+        const lowerTerm = term.toLowerCase()
+        return users.filter((user) =>
+            user.id.toLowerCase().includes(lowerTerm) ||
+            user.username.toLowerCase().includes(lowerTerm) ||
+            user.email.toLowerCase().includes(lowerTerm) ||
+            user.firstName.toLowerCase().includes(lowerTerm) ||
+            user.lastName.toLowerCase().includes(lowerTerm)
+        )
+    }
+
+    const sortUsers = (users: User[], field: SortField, direction: SortDirection): User[] => {
+        const sorted = [...users].sort((a, b) => {
+            let aVal = a[field]
+            let bVal = b[field]
+
+            if (aVal == null) aVal = ''
+            if (bVal == null) bVal = ''
+
+            if (typeof aVal === 'string' && typeof bVal === 'string') {
+                return aVal.localeCompare(bVal)
+            }
+            if (typeof aVal === 'boolean' && typeof bVal === 'boolean') {
+                return aVal === bVal ? 0 : aVal ? 1 : -1
+            }
+            if (aVal < bVal) return -1
+            if (aVal > bVal) return 1
+            return 0
+        })
+
+        return direction === 'asc' ? sorted : sorted.reverse()
+    }
+
+    const handleSort = (field: SortField) => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+        } else {
+            setSortField(field)
+            setSortDirection('asc')
+        }
+    }
+
+    const filteredAndSortedUsers = sortUsers(filterUsers(usersData, searchTerm), sortField, sortDirection)
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -54,6 +106,13 @@ function Users() {
                 <h1>App users</h1>
             </header>
             {errorMessage && <div className="error" style={{ marginBottom: '16px' }}>{errorMessage}</div>}
+            <TextField
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                size="small"
+                sx={{ marginBottom: '16px', width: '300px' }}
+            />
             {isLoading ? (
                 <div>Loading...</div>
             ) : (
@@ -78,13 +137,19 @@ function Users() {
                                             borderBottomColor: 'divider',
                                         }}
                                     >
-                                        {column}
+                                        <TableSortLabel
+                                            active={sortField === column}
+                                            direction={sortField === column ? sortDirection : 'asc'}
+                                            onClick={() => handleSort(column as SortField)}
+                                        >
+                                            {column}
+                                        </TableSortLabel>
                                     </TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {usersData.map((user) => ( // iterate over data
+                            {filteredAndSortedUsers.map((user) => (
                                 <TableRow
                                     key={user.id}
                                     sx={{
@@ -105,9 +170,13 @@ function Users() {
                                             }}
                                         >
                                             {column === 'id' ? (
-                                                <Link to={`${USERS_PATH}/${user.id}`} style={{ color: 'inherit' }}>
-                                                    {user.id}
-                                                </Link>
+                                                currentUser?.admin ? (
+                                                    <Link to={`${USERS_PATH}/${user.id}`} style={{ color: 'inherit' }}>
+                                                        {user.id}
+                                                    </Link>
+                                                ) : (
+                                                    user.id
+                                                )
                                             ) : column === 'dateOfBirth' ? (
                                                 user.dateOfBirth ?? '-'
                                             ) : column === 'admin' ? (

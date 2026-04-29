@@ -127,7 +127,9 @@ function App() {
                 <Route path={USERS_PATH} element={session ? <Users /> : <Navigate to={LOGIN_PATH} replace />} />
                 <Route
                     path={`${USERS_PATH}/:userId`}
-                    element={session ? <UserDetails /> : <Navigate to={LOGIN_PATH} replace />}
+                    element={
+                        session ? session.user.admin ? <UserDetails /> : <Navigate to={USERS_PATH} replace /> : <Navigate to={LOGIN_PATH} replace />
+                    }
                 />
                 <Route path="*" element={<Navigate to={session ? '/' : LOGIN_PATH} replace />} />
             </Routes>
