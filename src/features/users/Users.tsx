@@ -57,22 +57,57 @@ function Users() {
             {isLoading ? (
                 <div>Loading...</div>
             ) : (
-                <TableContainer component={Paper}>
-                    <Table>
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                        backgroundColor: 'background.paper',
+                        backgroundImage: 'none',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                    }}
+                >
+                    <Table sx={{ minWidth: 650 }}>
                         <TableHead>
                             <TableRow>
                                 {columns.map((column) => (
-                                    <TableCell key={column}>{column}</TableCell>
+                                    <TableCell
+                                        key={column}
+                                        sx={{
+                                            color: 'text.primary',
+                                            fontWeight: 700,
+                                            borderBottomColor: 'divider',
+                                        }}
+                                    >
+                                        {column}
+                                    </TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {usersData.map((user) => ( // iterate over data
-                                <TableRow key={user.id}>
+                                <TableRow
+                                    key={user.id}
+                                    sx={{
+                                        '&:nth-of-type(odd)': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                        },
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                        },
+                                    }}
+                                >
                                     {columns.map((column) => (
-                                        <TableCell key={`${user.id}-${column}`}>
+                                        <TableCell
+                                            key={`${user.id}-${column}`}
+                                            sx={{
+                                                color: 'text.primary',
+                                                borderBottomColor: 'divider',
+                                            }}
+                                        >
                                             {column === 'id' ? (
-                                                <Link to={`${USERS_PATH}/${user.id}`}>{user.id}</Link>
+                                                <Link to={`${USERS_PATH}/${user.id}`} style={{ color: 'inherit' }}>
+                                                    {user.id}
+                                                </Link>
                                             ) : column === 'dateOfBirth' ? (
                                                 user.dateOfBirth ?? '-'
                                             ) : column === 'admin' ? (
