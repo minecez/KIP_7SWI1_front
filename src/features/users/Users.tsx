@@ -178,7 +178,9 @@ function Users() {
                                                     user.id
                                                 )
                                             ) : column === 'dateOfBirth' ? (
-                                                user.dateOfBirth ?? '-'
+                                                user.dateOfBirth == "1753-01-01" ?
+                                                    "The Beginning of Time" :
+                                                    (user.dateOfBirth ?? "-")
                                             ) : column === 'admin' ? (
                                                 user.admin ? 'true' : 'false'
                                             ) : (
