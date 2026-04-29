@@ -18,7 +18,9 @@ function Users() {
     
     const currentUser = loadAuthSession()?.user
 
-    const columns = ['id', 'username', 'dateOfBirth', 'email', 'firstName', 'lastName', 'admin']
+    const columns = currentUser?.admin
+        ? ['id', 'username', 'dateOfBirth', 'email', 'firstName', 'lastName', 'admin']
+        : ['username', 'dateOfBirth', 'email', 'firstName', 'lastName', 'admin']
 
     const filterUsers = (users: User[], term: string): User[] => {
         if (!term) return users
